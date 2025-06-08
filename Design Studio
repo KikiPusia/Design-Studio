@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DesignStudio - Platforma do Projektowania</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', 'Poppins', sans-serif; /* Dodano Poppins dla spójności */
+            background-color: #f9fafb;
+            scroll-behavior: smooth; /* Dodano dla płynnego przewijania do sekcji */
+        }
+        .gradient-button {
+            background: linear-gradient(90deg, #7d2ae8 0%, #00c4cc 100%);
+            transition: all 0.3s ease;
+        }
+        .gradient-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(125, 42, 232, 0.2);
+        }
+        .template-card {
+            transition: all 0.3s ease;
+        }
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        /* Istniejący feature-icon z ds.html */
+        .feature-icon {
+            background: linear-gradient(135deg, #7d2ae8 0%, #00c4cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background: linear-gradient(90deg, #7d2ae8 0%, #00c4cc 100%);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .color-palette {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .color-palette:hover {
+            transform: scale(1.2);
+        }
+
+        /* Nowe style z melody.html */
+        .hero-gradient {
+            background: linear-gradient(135deg, #7d2ae8 0%, #00c4cc 100%);
+        }
+        .slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-delay-100 { animation-delay: 0.1s; }
+        .animate-delay-200 { animation-delay: 0.2s; }
+        .animate-delay-300 { animation-delay: 0.3s; }
+        .animate-delay-400 { animation-delay: 0.4s; }
+        .animate-delay-500 { animation-delay: 0.5s; }
+        
+        /* Animation Styles dla demo edytora */
+        .presentation-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .editor-interface {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .editor-toolbar {
+            height: 50px;
+            background-color: #f1f5f9;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .toolbar-item {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .toolbar-item:hover {
+            background-color: #e2e8f0;
+        }
+        
+        .editor-content {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+        }
+        
+        .slide-list {
+            width: 150px;
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 10px;
+            margin-right: 20px;
+        }
+        
+        .slide-thumbnail {
+            height: 80px;
+            background-color: white;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+        
+        .slide-thumbnail.active {
+            border: 2px solid #7d2ae8;
+        }
+        
+        .slide-editor {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slide-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .slide-content.active {
+            opacity: 1;
+        }
+        
+        .slide-title {
+            width: 70%;
+            height: 40px;
+            background-color: #f1f5f9;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        
+        .slide-text {
+            width: 70%;
+            height: 20px;
+            background-color: #f1f5f9;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        
+        .slide-image {
+            width: 70%;
+            height: 120px;
+            background-color: #f1f5f9;
+            border-radius: 4px;
+            margin-top: 20px;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        
+        .slide-content.active .slide-title,
+        .slide-content.active .slide-text,
+        .slide-content.active .slide-image {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .slide-content.active .slide-title {
+            transition-delay: 0.1s;
+        }
+        
+        .slide-content.active .slide-text:nth-child(2) {
+            transition-delay: 0.2s;
+        }
+        
+        .slide-content.active .slide-text:nth-child(3) {
+            transition-delay: 0.3s;
+        }
+        
+        .slide-content.active .slide-text:nth-child(4) {
+            transition-delay: 0.4s;
+        }
+        
+        .slide-content.active .slide-image {
+            transition-delay: 0.5s;
+        }
+        
+        .element-library {
+            position: absolute;
+            right: -200px;
+            top: 70px;
+            width: 180px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 10px;
+            transition: right 0.5s ease;
+        }
+        
+        .element-library.active {
+            right: 20px;
+        }
+        
+        .library-item {
+            height: 40px;
+            background-color: #f1f5f9;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .library-item:hover {
+            background-color: #e2e8f0;
+        }
+        
+        .cursor {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(125, 42, 232, 0.5);
+            border-radius: 50%;
+            z-index: 10;
+            pointer-events: none;
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        
+        .cursor::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            background-color: #7d2ae8;
+            border-radius: 50%;
+        }
+        
+        .template-preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f8fafc;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 5;
+        }
+        
+        .template-preview.active {
+            opacity: 1;
+        }
+        
+        .template-item {
+            width: calc(33.333% - 10px);
+            height: 100px;
+            background-color: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            transform: scale(0.95);
+            opacity: 0;
+        }
+        
+        .template-preview.active .template-item {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .template-item:nth-child(1) { transition-delay: 0.1s; background: linear-gradient(135deg, #7d2ae8 0%, #00c4cc 100%); }
+        .template-item:nth-child(2) { transition-delay: 0.15s; background-color: #f1f5f9; }
+        .template-item:nth-child(3) { transition-delay: 0.2s; background-color: #374151; }
+        .template-item:nth-child(4) { transition-delay: 0.25s; background-color: #fef3c7; }
+        .template-item:nth-child(5) { transition-delay: 0.3s; background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); }
+        .template-item:nth-child(6) { transition-delay: 0.35s; background-color: #ecfdf5; }
+        
+        .final-presentation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1e293b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 6;
+        }
+        
+        .final-presentation.active {
+            opacity: 1;
+        }
+        
+        .presentation-slide {
+            width: 80%;
+            height: 80%;
+            background: linear-gradient(135deg, #7d2ae8 0%, #00c4cc 100%);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
+        
+        .final-presentation.active .presentation-slide {
+            transform: scale(1);
+            opacity: 1;
+            transition-delay: 0.3s;
+        }
+        
+        .presentation-title {
+            width: 70%;
+            height: 40px;
+            background-color: white;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .presentation-text {
+            width: 60%;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .animation-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+        }
+        
+        .control-button {
+            padding: 8px 16px;
+            background-color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .control-button:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #7d2ae8 0%, #00c4cc 100%);
+            width: 0%;
+            transition: width 0.5s linear;
+            z-index: 20;
+        }
+        
+        /* Animation keyframes dla kursora */
+        @keyframes cursorMove1 {
+            0% { transform: translate(50px, 50px); }
+            100% { transform: translate(200px, 100px); }
+        }
+        
+        @keyframes cursorMove2 {
+            0% { transform: translate(200px, 100px); }
+            100% { transform: translate(300px, 150px); }
+        }
+        
+        @keyframes cursorMove3 {
+            0% { transform: translate(300px, 150px); }
+            100% { transform: translate(100px, 200px); }
+        }
+        
+        @keyframes cursorMove4 {
+            0% { transform: translate(100px, 200px); }
+            100% { transform: translate(250px, 250px); }
+        }
+        
+        @keyframes cursorMove5 {
+            0% { transform: translate(250px, 250px); }
+            100% { transform: translate(350px, 80px); }
+        }
+        
+        /* Nowy feature-card z melody.html */
+        .feature-card {
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Nowy feature-icon z melody.html (różni się od istniejącego) */
+        .feature-card .feature-icon {
+            background: linear-gradient(135deg, rgba(125, 42, 232, 0.1) 0%, rgba(0, 196, 204, 0.1) 100%);
+            border-radius: 12px;
+            padding: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            /* Resetuj tekstowe style z głównego .feature-icon */
+            -webkit-background-clip: padding-box;
+            -webkit-text-fill-color: initial;
+            color: #7d2ae8; /* Ustaw kolor ikon w nowym feature-icon */
+        }
+        
+        /* Dodane animacje dla kursora */
+        .cursor.animate-cursor-1 {
+            animation: cursorMove1 2s forwards;
+        }
+        
+        .cursor.animate-cursor-2 {
+            animation: cursorMove2 2s forwards;
+        }
+        
+        .cursor.animate-cursor-3 {
+            animation: cursorMove3 2s forwards;
+        }
+        
+        .cursor.animate-cursor-4 {
+            animation: cursorMove4 2s forwards;
+        }
+        
+        .cursor.animate-cursor-5 {
+            animation: cursorMove5 2s forwards;
+        }
+        
+        /* Dodane animacje pulsowania dla kursora */
+        @keyframes cursorPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .cursor.pulse {
+            animation: cursorPulse 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <svg class="h-8 w-auto" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M25 5C13.954 5 5 13.954 5 25C5 36.046 13.954 45 25 45C36.046 45 45 36.046 45 25C45 13.954 36.046 5 25 5Z" fill="url(#paint0_linear)"></path>
+                            <path d="M20 20H30V30H20V20Z" fill="white"></path>
+                            <defs>
+                                <linearGradient id="paint0_linear" x1="5" y1="25" x2="45" y2="25" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#7d2ae8"></stop>
+                                    <stop offset="1" stop-color="#00c4cc"></stop>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <span class="ml-2 text-xl font-bold text-gray-800">DesignStudio</span>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="#" onclick="event.preventDefault();" class="nav-link border-transparent text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium">Szablony</a>
+                        <a href="#" onclick="event.preventDefault();" class="nav-link border-transparent text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium">Funkcje</a>
+                        <a href="#" onclick="event.preventDefault();" class="nav-link border-transparent text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium">Cennik</a>
+                        <a href="#" onclick="event.preventDefault();" class="nav-link border-transparent text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium">Nauka</a>
+                    </div>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                    <button class="gradient-button text-white px-6 py-2 rounded-full font-medium" onclick="window.location.href='DesignStudio.html'">Stwórz projekt</button>
+                </div>
+                <div class="-mr-2 flex items-center sm:hidden">
+                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500" aria-expanded="false">
+                        <span class="sr-only">Otwórz menu główne</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="relative bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+                <main class="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
+                    <div class="sm:text-center lg:text-left">
+                        <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                            <span class="block">Projektuj wszystko</span>
+                            <span class="block text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-teal-400">z łatwością</span>
+                        </h1>
+                        <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+                            Twórz oszałamiające projekty do mediów społecznościowych, prezentacji, druku i wielu innych dzięki naszemu intuicyjnemu edytorowi przeciągnij i upuść.
+                        </p>
+                        <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
+                            <div class="rounded-md shadow">
+                                <a href="DesignStudio.html" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white gradient-button md:py-4 md:text-lg md:px-10">
+                                    Rozpocznij
+                                </a>
+                            </div>
+                            <div class="mt-3 sm:mt-0 sm:ml-3">
+                                <a href="#" onclick="event.preventDefault();" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200 md:py-4 md:text-lg md:px-10">
+                                    Obejrzyj demo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
+            <div class="h-56 w-full bg-gradient-to-r from-purple-100 to-teal-100 sm:h-72 md:h-96 lg:w-full lg:h-full flex items-center justify-center">
+                <div class="relative w-3/4 h-3/4 bg-white rounded-lg shadow-lg p-4 transform rotate-3">
+                    <div class="absolute top-0 left-0 right-0 h-10 bg-gray-100 flex items-center px-3 rounded-t-lg">
+                        <div class="flex space-x-2">
+                            <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                            <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                            <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                        </div>
+                    </div>
+                    <div class="mt-12 grid grid-cols-3 gap-3">
+                        <div class="h-20 bg-purple-100 rounded"></div>
+                        <div class="h-20 bg-blue-100 rounded"></div>
+                        <div class="h-20 bg-teal-100 rounded"></div>
+                        <div class="h-20 bg-pink-100 rounded"></div>
+                        <div class="h-20 bg-yellow-100 rounded"></div>
+                        <div class="h-20 bg-green-100 rounded"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-gray-50 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                    Szablony na każdą potrzebę
+                </h2>
+                <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+                    Wybierz spośród tysięcy profesjonalnie zaprojektowanych szablonów
+                </p>
+            </div>
+
+            <div class="mt-12">
+                <div class="flex justify-center mb-8 space-x-2">
+                    <button class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-full" onclick="event.preventDefault();">Wszystkie</button>
+                    <button class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 rounded-full" onclick="event.preventDefault();">Social Media</button>
+                    <button class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 rounded-full" onclick="event.preventDefault();">Prezentacje</button>
+                    <button class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 rounded-full" onclick="event.preventDefault();">Druk</button>
+                    <button class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 rounded-full" onclick="event.preventDefault();">Wideo</button>
+                </div>
+
+                <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                    <div class="template-card bg-white overflow-hidden rounded-lg shadow-md">
+                        <div class="h-48 bg-gradient-to-r from-purple-400 to-pink-500 flex items-center justify-center text-white text-xl font-bold">
+                            Post na Social Media
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-medium text-gray-900">Post na Instagramie</h3>
+                            <p class="mt-1 text-sm text-gray-500">Idealny do udostępniania aktualizacji i promocji</p>
+                            <button class="mt-4 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white gradient-button focus:outline-none" onclick="event.preventDefault();">
+                                Użyj tego szablonu
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="template-card bg-white overflow-hidden rounded-lg shadow-md">
+                        <div class="h-48 bg-gradient-to-r from-blue-400 to-teal-500 flex items-center justify-center text-white text-xl font-bold">
+                            Prezentacja
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-medium text-gray-900">Prezentacja biznesowa</h3>
+                            <p class="mt-1 text-sm text-gray-500">Zaimponuj swojej publiczności tą profesjonalną prezentacją</p>
+                            <button class="mt-4 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white gradient-button focus:outline-none" onclick="event.preventDefault();">
+                                Użyj tego szablonu
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="template-card bg-white overflow-hidden rounded-lg shadow-md">
+                        <div class="h-48 bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center text-white text-xl font-bold">
+                            Ulotka
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-medium text-gray-900">Promocja wydarzenia</h3>
+                            <p class="mt-1 text-sm text-gray-500">Przyciągnij uczestników tym przyciągającym wzrok projektem</p>
+                            <button class="mt-4 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white gradient-button focus:outline-none" onclick="event.preventDefault();">
+                                Użyj tego szablonu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10 text-center">
+                    <button class="px-6 py-3 border border-purple-600 text-purple-600 font-medium rounded-full hover:bg-purple-50 transition-colors" onclick="event.preventDefault();">
+                        Przeglądaj wszystkie szablony
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                    Projektuj jak profesjonalista
+                </h2>
+                <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+                    Potężne funkcje, które ułatwiają projektowanie każdemu
+                </p>
+            </div>
+
+            <div class="mt-16">
+                <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mb-4">
+                            <svg class="h-8 w-8 feature-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-medium text-gray-900">Edytor przeciągnij i upuść</h3>
+                        <p class="mt-2 text-base text-gray-500 text-center">
+                            Po prostu przeciągnij elementy na płótno i dostosuj je za pomocą kilku kliknięć.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mb-4">
+                            <svg class="h-8 w-8 feature-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-medium text-gray-900">Miliony zasobów</h3>
+                        <p class="mt-2 text-base text-gray-500 text-center">
+                            Uzyskaj dostęp do zdjęć, ilustracji, ikon i wielu innych, aby wzbogacić swoje projekty.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mb-4">
+                            <svg class="h-8 w-8 feature-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-medium text-gray-900">Inteligentne szablony</h3>
+                        <p class="mt-2 text-base text-gray-500 text-center">
+                            Profesjonalnie zaprojektowane szablony, które możesz dostosować do swojej marki.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section id="why-choose-us" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900">Dlaczego wybrać DesignStudio?</h2>
+                <p class="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">Nasze oprogramowanie do projektowania ma na celu uczynienie tworzenia pięknych projektów prostym i przyjemnym.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="feature-card bg-white rounded-xl p-6 shadow-lg">
+                    <div class="feature-icon mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Łatwa personalizacja</h3>
+                    <p class="text-gray-600">Dostosuj każdy aspekt swojego projektu za pomocą naszego intuicyjnego edytora przeciągnij i upuść. Nie są wymagane żadne umiejętności projektowe.</p>
+                </div>
+                
+                <div class="feature-card bg-white rounded-xl p-6 shadow-lg">
+                    <div class="feature-icon mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">500+ Szablonów</h3>
+                    <p class="text-gray-600">Wybierz z naszej biblioteki profesjonalnie zaprojektowanych szablonów dla każdego rodzaju projektu.</p>
+                </div>
+                
+                <div class="feature-card bg-white rounded-xl p-6 shadow-lg">
+                    <div class="feature-icon mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Bogata Biblioteka Multimediów</h3>
+                    <p class="text-gray-600">Uzyskaj dostęp do milionów zdjęć stockowych, ikon i grafik, aby wzbogacić swoje projekty.</p>
+                </div>
+                
+                <div class="feature-card bg-white rounded-xl p-6 shadow-lg">
+                    <div class="feature-icon mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Oszczędność czasu</h3>
+                    <p class="text-gray-600">Twórz profesjonalne projekty w minuty, a nie godziny. Nasze szablony i narzędzia przyspieszają Twoją pracę.</p>
+                </div>
+                
+                <div class="feature-card bg-white rounded-xl p-6 shadow-lg">
+                    <div class="feature-icon mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">W chmurze</h3>
+                    <p class="text-gray-600">Uzyskaj dostęp do swoich projektów z dowolnego miejsca. Pracuj płynnie na wszystkich swoich urządzeniach.</p>
+                </div>
+                
+                <div class="feature-card bg-white rounded-xl p-6 shadow-lg">
+                    <div class="feature-icon mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Współpraca zespołowa</h3>
+                    <p class="text-gray-600">Pracuj razem ze swoim zespołem w czasie rzeczywistym. Udostępniaj, komentuj i edytuj projekty jednocześnie.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="bg-gray-50 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                    Wypróbuj nasz edytor
+                </h2>
+                <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+                    Przekonaj się, jak łatwo jest tworzyć piękne projekty
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="bg-gray-100 px-4 py-3 border-b border-gray-200 flex items-center">
+                    <div class="flex space-x-2">
+                        <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                        <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                        <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                    </div>
+                    <div class="ml-4 text-sm text-gray-500">Edytor Projektów</div>
+                </div>
+                
+                <div class="flex h-96">
+                    <div class="w-48 bg-gray-50 border-r border-gray-200 p-4">
+                        <div class="mb-6">
+                            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Elementy</h3>
+                            <div class="mt-3 grid grid-cols-2 gap-2">
+                                <div class="h-12 bg-gray-200 rounded flex items-center justify-center text-gray-500">
+                                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                    </svg>
+                                </div>
+                                <div class="h-12 bg-gray-200 rounded flex items-center justify-center text-gray-500">
+                                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="h-12 bg-gray-200 rounded flex items-center justify-center text-gray-500">
+                                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                    </svg>
+                                </div>
+                                <div class="h-12 bg-gray-200 rounded flex items-center justify-center text-gray-500">
+                                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Kolory</h3>
+                            <div class="mt-3 flex flex-wrap">
+                                <div class="color-palette bg-red-500"></div>
+                                <div class="color-palette bg-yellow-500"></div>
+                                <div class="color-palette bg-green-500"></div>
+                                <div class="color-palette bg-blue-500"></div>
+                                <div class="color-palette bg-purple-500"></div>
+                                <div class="color-palette bg-pink-500"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 p-8 flex items-center justify-center bg-gray-100">
+                        <div id="canvas" class="w-64 h-64 bg-white shadow-md rounded-md relative">
+                            <div id="draggable-element" class="absolute cursor-move p-2 bg-purple-100 rounded border border-purple-300 shadow-sm" style="top: 20px; left: 20px;">
+                                Przeciągnij mnie!
+                            </div>
+                            <div class="absolute bottom-4 right-4 w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <button class="gradient-button text-white px-8 py-3 rounded-full font-medium" onclick="window.location.href='DesignStudio.html'">
+                    Zacznij projektować teraz
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <section id="demo-action" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900">Zobacz DesignStudio w Akcji</h2>
+                <p class="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">Zobacz, jak łatwo jest tworzyć profesjonalne projekty w kilka minut.</p>
+            </div>
+            
+            <div class="presentation-container">
+                <div class="editor-interface">
+                    <div class="editor-toolbar">
+                        <div class="toolbar-item">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </div>
+                        <div class="toolbar-item">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="toolbar-item">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                            </svg>
+                        </div>
+                        <div class="toolbar-item">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                            </svg>
+                        </div>
+                        <div class="toolbar-item">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="editor-content">
+                        <div class="slide-list">
+                            <div class="slide-thumbnail active"></div>
+                            <div class="slide-thumbnail"></div>
+                            <div class="slide-thumbnail"></div>
+                        </div>
+                        <div class="slide-editor">
+                            <div class="slide-content active">
+                                <div class="slide-title"></div>
+                                <div class="slide-text"></div>
+                                <div class="slide-text"></div>
+                                <div class="slide-text"></div>
+                                <div class="slide-image"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="element-library">
+                    <div class="library-item">
+                        <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+                        </svg>
+                        <span class="text-sm">Tekst</span>
+                    </div>
+                    <div class="library-item">
+                        <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <span class="text-sm">Obraz</span>
+                    </div>
+                    <div class="library-item">
+                        <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        <span class="text-sm">Wykres</span>
+                    </div>
+                    <div class="library-item">
+                        <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+                        </svg>
+                        <span class="text-sm">Kształty</span>
+                    </div>
+                </div>
+                
+                <div class="template-preview">
+                    <div class="template-item"></div>
+                    <div class="template-item"></div>
+                    <div class="template-item"></div>
+                    <div class="template-item"></div>
+                    <div class="template-item"></div>
+                    <div class="template-item"></div>
+                </div>
+                
+                <div class="final-presentation">
+                    <div class="presentation-slide">
+                        <div class="presentation-title"></div>
+                        <div class="presentation-text"></div>
+                        <div class="presentation-text"></div>
+                        <div class="presentation-text"></div>
+                    </div>
+                </div>
+                
+                <div class="cursor"></div>
+                
+                <div class="progress-bar"></div>
+                
+                <div class="animation-controls">
+                    <button class="control-button" id="restart-animation" onclick="event.preventDefault();">Restart Demo</button>
+                    <button class="control-button" id="skip-animation" onclick="event.preventDefault();">Skip Demo</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900">Proste, przejrzyste ceny</h2>
+                <p class="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">Wybierz plan, który najlepiej odpowiada Tobie i Twojemu zespołowi.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Darmowy</h3>
+                    <p class="text-gray-600 mb-6">Idealny dla osób, które dopiero zaczynają</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-gray-900">$0</span>
+                        <span class="text-gray-500">/miesiąc</span>
+                    </div>
+                    <ul class="mb-8 space-y-3">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-600">5 projektów</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-600">Podstawowe szablony</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-600">Ograniczone zdjęcia stockowe</span>
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            <span>Współpraca zespołowa</span>
+                        </li>
+                    </ul>
+                    <a href="#" onclick="event.preventDefault();" class="block text-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium px-6 py-3 rounded-md transition duration-300">Rozpocznij</a>
+                </div>
+                
+                <div class="bg-white p-8 rounded-xl shadow-lg border-2 border-purple-700 relative">
+                    <div class="absolute top-0 right-0 bg-purple-700 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">POPULARNY</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Pro</h3>
+                    <p class="text-gray-600 mb-6">Idealny dla profesjonalistów i małych zespołów</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-gray-900">$12</span>
+                        <span class="text-gray-500">/miesiąc</span>
+                    </div>
+                    <ul class="mb-8 space-y-3">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-600">Nieograniczone projekty</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-600">Wszystkie szablony</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-600">Pełna biblioteka zdjęć stockowych</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-600">Współpraca zespołowa (do 5 osób)</span>
+                        </li>
+                    </ul>
+                    <a href="#" onclick="event.preventDefault();" class="block text-center gradient-button text-white font-medium px-6 py-3 rounded-md transition duration-300">Rozpocznij</a>
+                </div>
+                
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Enterprise</h3>
+                    <p class="text-gray-600 mb-6">Idealny dla większych zespołów i organizacji</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-gray-900">$29</span>
+                        <span class="text-gray-500">/miesiąc</span>
+                    </div>
+                    <ul class="mb-8 space-y-3">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-600">Nieograniczone wszystko</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-600">Szablony premium</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-600">Nieograniczona liczba członków zespołu</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-600">Dedykowane wsparcie</span>
+                        </li>
+                    </ul>
+                    <a href="#" onclick="event.preventDefault();" class="block text-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium px-6 py-3 rounded-md transition duration-300">Skontaktuj się z działem sprzedaży</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="bg-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                    Kochany przez projektantów i nieprojektantów
+                </h2>
+                <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+                    Zobacz, co mówią nasi użytkownicy o swoich doświadczeniach
+                </p>
+            </div>
+
+            <div class="mt-12 grid gap-8 md:grid-cols-3">
+                <div class="bg-gray-50 rounded-lg p-6 shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <div class="h-12 w-12 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 flex items-center justify-center text-white font-bold text-xl">
+                            S
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-900">Sarah K.</h3>
+                            <p class="text-sm text-gray-500">Menedżer Marketingu</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        "Ta platforma całkowicie zmieniła sposób, w jaki nasz zespół tworzy materiały marketingowe. Tak intuicyjna, a wyniki zawsze wyglądają profesjonalnie."
+                    </p>
+                    <div class="mt-4 flex text-yellow-400">
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-6 shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-400 to-teal-500 flex items-center justify-center text-white font-bold text-xl">
+                            M
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-900">Michael T.</h3>
+                            <p class="text-sm text-gray-500">Właściciel małej firmy</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        "Jako ktoś, kto nie ma żadnych umiejętności projektowania, to narzędzie zmieniło zasady gry. Mogę tworzyć profesjonalnie wyglądające materiały dla mojej firmy w ciągu kilku minut."
+                    </p>
+                    <div class="mt-4 flex text-yellow-400">
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-6 shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <div class="h-12 w-12 rounded-full bg-gradient-to-r from-pink-400 to-red-500 flex items-center justify-center text-white font-bold text-xl">
+                            J
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-900">Jessica L.</h3>
+                            <p class="text-sm text-gray-500">Twórca treści</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        "Używam tej platformy codziennie do moich treści w mediach społecznościowych. Szablony są wspaniałe i oszczędza mi to tyle czasu w porównaniu z tradycyjnym oprogramowaniem do projektowania."
+                    </p>
+                    <div class="mt-4 flex text-yellow-400">
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-gradient-to-r from-purple-600 to-indigo-600 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
+                    Gotowy, aby zacząć tworzyć?
+                </h2>
+                <p class="mt-3 max-w-md mx-auto text-xl text-indigo-200 sm:mt-4">
+                    Dołącz do milionów użytkowników tworzących oszałamiające projekty dzięki naszej platformie
+                </p>
+                <div class="mt-8 flex justify-center">
+                    <div class="inline-flex rounded-md shadow">
+                        <a href="DesignStudio.html" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-purple-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
+                            Rozpocznij za darmo
+                        </a>
+                    </div>
+                    <div class="ml-3 inline-flex">
+                        <a href="#" onclick="event.preventDefault();" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-purple-800 bg-opacity-60 hover:bg-opacity-70 md:py-4 md:text-lg md:px-10">
+                            Obejrzyj demo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center">
+                        <svg class="h-8 w-auto" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M25 5C13.954 5 5 13.954 5 25C5 36.046 13.954 45 25 45C36.046 45 45 36.046 45 25C45 13.954 36.046 5 25 5Z" fill="url(#paint0_linear_footer)"></path>
+                            <path d="M20 20H30V30H20V20Z" fill="white"></path>
+                            <defs>
+                                <linearGradient id="paint0_linear_footer" x1="5" y1="25" x2="45" y2="25" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#7d2ae8"></stop>
+                                    <stop offset="1" stop-color="#00c4cc"></stop>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <span class="ml-2 text-xl font-bold">DesignStudio</span>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-300">
+                        Upraszczamy projektowanie dla każdego.
+                    </p>
+                    <div class="mt-4 flex space-x-4">
+                        <a href="#" onclick="event.preventDefault();" class="text-gray-400 hover:text-white">
+                            <span class="sr-only">Facebook</span>
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                        <a href="#" onclick="event.preventDefault();" class="text-gray-400 hover:text-white">
+                            <span class="sr-only">Instagram</span>
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                        <a href="#" onclick="event.preventDefault();" class="text-gray-400 hover:text-white">
+                            <span class="sr-only">Twitter</span>
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Produkt</h3>
+                    <ul class="mt-4 space-y-2">
+                        <li><a href="#" onclick="event.preventDefault();" class="text-base text-gray-400 hover:text-white">Funkcje</a></li>
+                        <li><a href="#" onclick="event.preventDefault();" class="text-base text-gray-400 hover:text-white">Szablony</a></li>
+                        <li><a href="#" onclick="event.preventDefault();" class="text-base text-gray-400 hover:text-white">Cennik</a></li>
+                        <li><a href="#" onclick="event.preventDefault();" class="text-base text-gray-400 hover:text-white">Aktualizacje</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Zasoby</h3>
+                    <ul class="mt-4 space-y-2">
+                        <li><a href="#" onclick="event.preventDefault();" class="text-base text-gray-400 hover:text-white">Blog</a></li>
+                        <li><a href="#" onclick="event.preventDefault();" class="text-base text-gray-400 hover:text-white">Tutoriale</a></li>
+                        <li><a href="#" onclick="event.preventDefault();" class="text-base text-gray-400 hover:text-white">Wsparcie</a></li>
+                        <li><a href="#" onclick="event.preventDefault();" class="text-base text-gray-400 hover:text-white">Społeczność</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Firma</h3>
+                    <ul class="mt-4 space-y-2">
+                        <li><a href="#" onclick="event.preventDefault();" class="text-base text-gray-400 hover:text-white">O nas</a></li>
+                        <li><a href="#" onclick="event.preventDefault();" class="text-base text-gray-400 hover:text-white">Kariera</a></li>
+                        <li><a href="#" onclick="event.preventDefault();" class="text-base text-gray-400 hover:text-white">Kontakt</a></li>
+                        <li><a href="#" onclick="event.preventDefault();" class="text-base text-gray-400 hover:text-white">Prywatność</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-12 border-t border-gray-700 pt-8">
+                <p class="text-base text-gray-400 text-center">
+                    © 2023 DesignStudio. Wszelkie prawa zastrzeżone.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Funkcjonalność edytora demo (przeciąganie i paleta kolorów) - istniejąca
+        const draggableElement = document.getElementById('draggable-element');
+        const canvas = document.getElementById('canvas');
+        
+        let isDragging = false;
+        let offsetX, offsetY;
+        
+        if (draggableElement && canvas) { // Sprawdź, czy elementy istnieją
+            draggableElement.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                offsetX = e.clientX - draggableElement.getBoundingClientRect().left;
+                offsetY = e.clientY - draggableElement.getBoundingClientRect().top;
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                
+                const canvasRect = canvas.getBoundingClientRect();
+                let newX = e.clientX - canvasRect.left - offsetX;
+                let newY = e.clientY - canvasRect.top - offsetY;
+                
+                // Ogranicz element do granic płótna
+                newX = Math.max(0, Math.min(newX, canvasRect.width - draggableElement.offsetWidth));
+                newY = Math.max(0, Math.min(newY, canvasRect.height - draggableElement.offsetHeight));
+                
+                draggableElement.style.left = newX + 'px';
+                draggableElement.style.top = newY + 'px';
+            });
+            
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+            
+            // Funkcjonalność palety kolorów
+            const colorPalettes = document.querySelectorAll('.color-palette');
+            colorPalettes.forEach(palette => {
+                palette.addEventListener('click', () => {
+                    const color = window.getComputedStyle(palette).backgroundColor;
+                    draggableElement.style.backgroundColor = color;
+                });
+            });
+        }
+
+        // Nowa funkcjonalność demo animacji z melody.html
+        const presentationContainer = document.querySelector('.presentation-container');
+        const slideThumbnails = document.querySelectorAll('.slide-thumbnail');
+        const slideContent = document.querySelector('.slide-content');
+        const elementLibrary = document.querySelector('.element-library');
+        const templatePreview = document.querySelector('.template-preview');
+        const finalPresentation = document.querySelector('.final-presentation');
+        const cursor = document.querySelector('.cursor');
+        const progressBar = document.querySelector('.progress-bar');
+        const restartButton = document.getElementById('restart-animation');
+        const skipButton = document.getElementById('skip-animation');
+
+        let animationTimeout;
+        let currentStep = 0;
+        const steps = [
+            // Step 0: Initial state (already set by HTML/CSS)
+            () => {
+                // Initial state, ensure elements are reset
+                slideThumbnails.forEach(thumb => thumb.classList.remove('active'));
+                slideThumbnails[0].classList.add('active');
+                slideContent.classList.add('active');
+                slideContent.querySelectorAll('.slide-title, .slide-text, .slide-image').forEach(el => {
+                    el.style.transform = 'translateY(20px)';
+                    el.style.opacity = '0';
+                });
+                elementLibrary.classList.remove('active');
+                templatePreview.classList.remove('active');
+                finalPresentation.classList.remove('active');
+                progressBar.style.width = '0%';
+                cursor.style.transform = 'translate(50px, 50px)';
+                cursor.classList.remove('animate-cursor-1', 'animate-cursor-2', 'animate-cursor-3', 'animate-cursor-4', 'animate-cursor-5', 'pulse');
+            },
+            // Step 1: Cursor moves to add element button
+            () => {
+                cursor.classList.add('animate-cursor-1');
+                cursor.style.transform = 'translate(200px, 100px)'; // Example target for "add element" button
+                setTimeout(() => cursor.classList.add('pulse'), 1800); // Pulse at the end of movement
+            },
+            // Step 2: Element library appears, cursor clicks "Image"
+            () => {
+                elementLibrary.classList.add('active');
+                cursor.classList.remove('animate-cursor-1', 'pulse');
+                cursor.classList.add('animate-cursor-2');
+                cursor.style.transform = 'translate(250px, 180px)'; // Example target for "Image" in library
+                setTimeout(() => cursor.classList.add('pulse'), 1800);
+            },
+            // Step 3: Image element appears on slide, cursor moves to templates
+            () => {
+                slideContent.querySelector('.slide-image').style.transform = 'translateY(0)';
+                slideContent.querySelector('.slide-image').style.opacity = '1';
+                elementLibrary.classList.remove('active');
+                cursor.classList.remove('animate-cursor-2', 'pulse');
+                cursor.classList.add('animate-cursor-3');
+                cursor.style.transform = 'translate(300px, 70px)'; // Example target for "Templates" button
+                setTimeout(() => cursor.classList.add('pulse'), 1800);
+            },
+            // Step 4: Template preview appears, cursor clicks a template
+            () => {
+                templatePreview.classList.add('active');
+                cursor.classList.remove('animate-cursor-3', 'pulse');
+                cursor.classList.add('animate-cursor-4');
+                cursor.style.transform = 'translate(100px, 200px)'; // Example target for a template item
+                setTimeout(() => cursor.classList.add('pulse'), 1800);
+            },
+            // Step 5: Final presentation appears
+            () => {
+                templatePreview.classList.remove('active');
+                finalPresentation.classList.add('active');
+                cursor.classList.remove('animate-cursor-4', 'pulse');
+                cursor.classList.add('animate-cursor-5');
+                cursor.style.transform = 'translate(400px, 200px)'; // Center of final presentation
+                setTimeout(() => cursor.classList.add('pulse'), 1800);
+            }
+        ];
+
+        function runAnimationStep() {
+            if (currentStep < steps.length) {
+                steps[currentStep]();
+                progressBar.style.width = ((currentStep + 1) / steps.length) * 100 + '%';
+                currentStep++;
+                animationTimeout = setTimeout(runAnimationStep, 2500); // Adjust timing as needed
+            } else {
+                // Animation finished, loop or stop
+                setTimeout(resetAnimation, 2000); // Reset after a short delay
+            }
+        }
+
+        function resetAnimation() {
+            clearTimeout(animationTimeout);
+            currentStep = 0;
+            steps[0](); // Reset to initial state
+            setTimeout(runAnimationStep, 1000); // Start again after a short delay
+        }
+
+        function skipAnimation() {
+            clearTimeout(animationTimeout);
+            currentStep = steps.length; // Skip to the end
+            progressBar.style.width = '100%';
+            finalPresentation.classList.add('active'); // Ensure final state is shown
+            elementLibrary.classList.remove('active');
+            templatePreview.classList.remove('active');
+            slideContent.classList.remove('active'); // Hide editor interface elements
+            cursor.style.display = 'none'; // Hide cursor
+            // Optionally, show a static image or message instead of the animation
+        }
+
+        // Event Listeners for controls
+        if (restartButton) {
+            restartButton.addEventListener('click', resetAnimation);
+        }
+        if (skipButton) {
+            skipButton.addEventListener('click', skipAnimation);
+        }
+
+        // Start animation on window load
+        window.onload = function () {
+            if (presentationContainer) { // Only run if the demo section exists
+                resetAnimation(); // Initial setup and start
+            }
+        };
+    </script>
+</body>
+</html>
